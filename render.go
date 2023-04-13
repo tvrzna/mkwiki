@@ -48,16 +48,19 @@ func newPage(path string, c *config) *page {
 
 func layout() *template.Template {
 	layout := `<!DOCTYPE html>
-	<html>
+<html>
 	<head>
 		<title>mkwiki | {{ .Path }}</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 	</head>
 	<body>
-		<div>
-			<div>
+		<div style="display: flex; max-width: 75rem; margin: 0 auto;">
+			<div style="flex: 3;">
 				{{ .Content }}
 			</div>
-			<div>
+			<div style="flex: 1;">
+				<h3>Content</h3>
 				<ul>
 					{{ range .ContentList }}
 						<li>
