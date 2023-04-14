@@ -5,8 +5,11 @@ import (
 	"html/template"
 	"io/fs"
 	"log"
+	"mime"
+	"net/http"
 	"os"
 	"path/filepath"
+	"regexp"
 	"sort"
 	"strings"
 
@@ -63,6 +66,52 @@ func layout() *template.Template {
 	return tpl
 }
 
+func requestHandler(c *config) func(http.ResponseWriter, *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path == "/style.css" || r.URL.Path == "/favicon.ico" {
+			f, _ := www.ReadFile("www" + r.URL.Path)
+			w.Header().Add("content-type", getMimeType(r.URL.Path))
+			w.Write(f)
+		} else if b, _ := regexp.MatchString("(?i).*\\.(png|jpg|jpeg|gif|ico)$", r.URL.Path); b {
+			serveImage(c, r.URL.Path, w)
+		} else {
+			p := newPage(r.URL.Path, c)
+			w.WriteHeader(p.responseCode)
+			if err := c.layout.Execute(w, p); err != nil {
+				w.WriteHeader(500)
+				log.Println(err)
+			}
+		}
+	}
+}
+
+func serveImage(c *config, path string, w http.ResponseWriter) {
+	f, err := os.OpenFile(c.path+"/"+path, os.O_RDONLY, 0600)
+	w.Header().Add("content-type", getMimeType(path))
+	if err != nil {
+		w.WriteHeader(404)
+		return
+	}
+	defer f.Close()
+
+	buf := make([]byte, 1024)
+	for {
+		n, err := f.Read(buf)
+		if n == 0 {
+			break
+		}
+		if err != nil {
+			w.WriteHeader(500)
+			return
+		}
+		w.Write(buf[:n])
+	}
+}
+
+func getMimeType(path string) string {
+	return mime.TypeByExtension(path[strings.LastIndex(path, "."):])
+}
+
 func (p *page) loadMarkdown(path string) {
 	md, err := os.ReadFile(path)
 	if err != nil {
@@ -83,7 +132,6 @@ func (p *page) loadMarkdown(path string) {
 }
 
 func (p *page) loadContentList(c *config, currentPath string) {
-
 	filepath.WalkDir(c.path, func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err

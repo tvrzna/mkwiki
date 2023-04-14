@@ -35,8 +35,14 @@ body {
 	flex: 1;
 }
 
+#wrapper > #pages ul {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
 #wrapper > #footer {
-	color: #555555;
+	color: #777777;
 	flex: 1;
 	font-size: 0.625rem;
 	order: 1;
