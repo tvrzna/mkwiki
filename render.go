@@ -1,8 +1,10 @@
 package main
 
 import (
+	"embed"
 	"html/template"
 	"io/fs"
+	"log"
 	"os"
 	"path/filepath"
 	"sort"
@@ -12,6 +14,9 @@ import (
 	"github.com/gomarkdown/markdown/html"
 	"github.com/gomarkdown/markdown/parser"
 )
+
+//go:embed www
+var www embed.FS
 
 type page struct {
 	responseCode int
@@ -33,6 +38,9 @@ func newPage(path string, c *config) *page {
 	if path == "/" {
 		path = "/index"
 	}
+	if path[len(path)-1:] == "/" {
+		path = path[:len(path)-1]
+	}
 	filePath := c.path + "/" + path + ".md"
 	filePath = strings.ReplaceAll(filePath, "//", "/")
 
@@ -48,36 +56,11 @@ func newPage(path string, c *config) *page {
 }
 
 func layout() *template.Template {
-	layout := `<!DOCTYPE html>
-<html>
-	<head>
-		<title>mkwiki | {{ .Path }}</title>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-	</head>
-	<body>
-		<div style="display: flex; max-width: 75rem; margin: 0 auto;">
-			<div style="flex: 3;">
-				{{ .Content }}
-			</div>
-			<div style="flex: 1;">
-				<h3>Content</h3>
-				<ul>
-					{{ range .ContentList }}
-						<li>
-							{{ if .Current }}
-								{{ .Path }}
-							{{ else }}
-								<a href="{{$.UrlFor .Path}}">{{ .Path }}</a>
-							{{ end }}
-						</li>						
-					{{ end }}
-				</ul>
-			</div>
-	</body>
-</html>`
-
-	return template.Must(template.New("main").Parse(layout))
+	tpl, err := template.ParseFS(www, "www/template.html")
+	if err != nil {
+		log.Fatal(err)
+	}
+	return tpl
 }
 
 func (p *page) loadMarkdown(path string) {

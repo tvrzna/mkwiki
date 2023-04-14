@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+	<head>
+		<title>mkwiki | {{.Path}}</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+		<link rel="stylesheet" type="text/css" href="{{.UrlFor "style.css" }}" />
+	</head>
+	<body>
+		<div id="wrapper">
+			<div id="content">
+				{{.Content}}
+			</div>
+			<div id="pages">
+				<h3>Pages</h3>
+				<ul>
+					{{ range .ContentList }}
+						<li>
+							{{ if .Current }}
+								{{ .Path }}
+							{{ else }}
+								<a href="{{$.UrlFor .Path}}">{{.Path}}</a>
+							{{ end }}
+						</li>						
+					{{ end }}
+				</ul>
+			</div>
+			<div id="footer">Powered by <a href="https://github.com/tvrzna/mkwiki" target="_blank">mkwiki</a></div>
+		</div>
+	</body>
+</html>
