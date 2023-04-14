@@ -41,23 +41,40 @@ func newPage(path string, c *config) *page {
 	p := &page{responseCode: 200, c: c}
 
 	if path == "/" {
-		path = "/index"
+		for _, p := range []string{"index.md", "readme.md", "README.md"} {
+			filePath := buildFilePath(c, p)
+			if _, err := os.Stat(filePath); err == nil {
+				path = p
+				break
+			}
+		}
+	} else {
+		for strings.HasSuffix(path, "/") {
+			path = path[:len(path)-1]
+		}
+		for strings.HasPrefix(path, "/") {
+			path = path[1:]
+		}
 	}
-	if path[len(path)-1:] == "/" {
-		path = path[:len(path)-1]
-	}
-	filePath := c.path + "/" + path + ".md"
-	filePath = strings.ReplaceAll(filePath, "//", "/")
 
-	for strings.HasPrefix(path, "/") {
-		path = path[1:]
-	}
+	filePath := c.path + "/" + path
+	filePath = strings.ReplaceAll(filePath, "//", "/")
 
 	p.Path = path
 	p.loadMarkdown(filePath)
 	p.loadContentList(c, path)
 
 	return p
+}
+
+func buildFilePath(c *config, path string) string {
+	if path[len(path)-1:] == "/" {
+		path = path[:len(path)-1]
+	}
+	filePath := c.path + "/" + path
+	filePath = strings.ReplaceAll(filePath, "//", "/")
+
+	return filePath
 }
 
 func layout() *template.Template {
@@ -76,13 +93,16 @@ func requestHandler(c *config) func(http.ResponseWriter, *http.Request) {
 			w.Write(f)
 		} else if b, _ := regexp.MatchString("(?i).*\\.(png|jpg|jpeg|gif|ico)$", r.URL.Path); b {
 			serveImage(c, r.URL.Path, w)
-		} else {
+		} else if strings.HasSuffix(strings.ToLower(r.URL.Path), ".md") || r.URL.Path == "/" {
 			p := newPage(r.URL.Path, c)
 			w.WriteHeader(p.responseCode)
 			if err := c.layout.Execute(w, p); err != nil {
 				w.WriteHeader(500)
 				log.Println(err)
 			}
+		} else {
+			// TODO: handle the other files
+			w.WriteHeader(404)
 		}
 	}
 }
@@ -129,7 +149,7 @@ func (p *page) loadMarkdown(path string) {
 	pr := parser.NewWithExtensions(extensions)
 	doc := pr.Parse(md)
 
-	htmlFlags := html.CommonFlags | html.HrefTargetBlank
+	htmlFlags := html.CommonFlags
 	opts := html.RendererOptions{Flags: htmlFlags}
 	renderer := html.NewRenderer(opts)
 
@@ -141,10 +161,10 @@ func (p *page) loadContentList(c *config, currentPath string) {
 		if err != nil {
 			return err
 		}
-		if !strings.HasSuffix(path, ".md") {
+		if !strings.HasSuffix(strings.ToLower(path), ".md") {
 			return nil
 		}
-		url := strings.ReplaceAll(strings.ReplaceAll(path, c.path+"/", ""), ".md", "")
+		url := strings.ReplaceAll(path, c.path+"/", "")
 
 		p.ContentList = append(p.ContentList, &pageContent{url == currentPath, strings.Count(url, string("/")), url})
 
