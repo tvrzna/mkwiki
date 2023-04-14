@@ -60,3 +60,12 @@ code, pre {
 	line-height: 1rem;
 	padding: 0.125rem 0.25rem;
 }
+
+img {
+	max-width: 54rem;
+}
+
+hr {
+	border: 0;
+	border-top: thin solid #cccccc;
+}
