@@ -15,6 +15,7 @@ import (
 
 type page struct {
 	responseCode int
+	c            *config
 	Path         string
 	Content      template.HTML
 	ContentList  []*pageContent
@@ -27,7 +28,7 @@ type pageContent struct {
 }
 
 func newPage(path string, c *config) *page {
-	p := &page{responseCode: 200}
+	p := &page{responseCode: 200, c: c}
 
 	if path == "/" {
 		path = "/index"
@@ -67,7 +68,7 @@ func layout() *template.Template {
 							{{ if .Current }}
 								{{ .Path }}
 							{{ else }}
-								<a href="/{{ .Path }}">{{ .Path }}</a>
+								<a href="{{$.UrlFor .Path}}">{{ .Path }}</a>
 							{{ end }}
 						</li>						
 					{{ end }}
@@ -120,4 +121,8 @@ func (p *page) loadContentList(c *config, currentPath string) {
 		}
 		return p.ContentList[i].Level < p.ContentList[j].Level
 	})
+}
+
+func (p *page) UrlFor(path string) string {
+	return p.c.getAppUrl() + "/" + path
 }
