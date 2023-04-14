@@ -12,6 +12,7 @@ import (
 	"regexp"
 	"sort"
 	"strings"
+	"time"
 
 	"github.com/gomarkdown/markdown"
 	"github.com/gomarkdown/markdown/html"
@@ -26,6 +27,7 @@ type page struct {
 	c            *config
 	Path         string
 	Content      template.HTML
+	LastModify   time.Time
 	ContentList  []*pageContent
 }
 
@@ -118,6 +120,9 @@ func (p *page) loadMarkdown(path string) {
 		p.responseCode = 404
 		p.Content = template.HTML("<h1>404 - not found</h1>")
 		return
+	}
+	if fi, err := os.Stat(path); err == nil {
+		p.LastModify = fi.ModTime()
 	}
 
 	extensions := parser.CommonExtensions | parser.AutoHeadingIDs | parser.NoEmptyLineBeforeBlock

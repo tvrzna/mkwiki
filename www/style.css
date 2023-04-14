@@ -75,3 +75,12 @@ hr {
 	border: 0;
 	border-top: thin solid #cccccc;
 }
+
+.last-modify {
+	border-top: thin solid #cccccc;
+	color: #666666;
+	font-size: 0.75rem;
+	margin-top: 1rem;
+	padding-top: 0.25rem;
+	text-align: right;
+}
