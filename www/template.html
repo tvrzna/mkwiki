@@ -10,9 +10,11 @@
 		<div id="wrapper">
 			<div id="content">
 				{{.Content}}
-				<div class="last-modify">
-					Last modified {{.LastModify.Format "2006-01-02 15:04:05"}}
-				</div>
+				{{if not .LastModify.IsZero}}
+					<div class="last-modify">
+						Last modified {{.LastModify.Format "2006-01-02 15:04:05"}}
+					</div>
+				{{end}}
 			</div>
 			<div id="pages">
 				<h3>Pages</h3>
