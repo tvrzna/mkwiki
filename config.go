@@ -21,6 +21,7 @@ func loadConfig(arg []string) *config {
 
 	c := &config{cwd, "", 1500, layout()}
 
+	args.ParseArgs(arg, func(arg, value string) {
 	args.ParseArgs(os.Args, func(arg, value string) {
 		switch arg {
 		case "-h", "--help":
