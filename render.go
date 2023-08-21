@@ -29,6 +29,7 @@ type page struct {
 	Content      template.HTML
 	LastModify   time.Time
 	ContentList  []*pageContent
+	Version      string
 }
 
 type pageContent struct {
@@ -38,7 +39,7 @@ type pageContent struct {
 }
 
 func newPage(path string, c *config) *page {
-	p := &page{responseCode: 200, c: c}
+	p := &page{responseCode: 200, c: c, Version: c.getVersion()}
 
 	if path == "/" {
 		for _, p := range []string{"index.md", "readme.md", "README.md"} {

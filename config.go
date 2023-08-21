@@ -11,6 +11,8 @@ import (
 	"github.com/tvrzna/go-utils/args"
 )
 
+var buildVersion string
+
 type config struct {
 	path   string
 	appUrl string
@@ -29,7 +31,7 @@ func loadConfig(arg []string) *config {
 			fmt.Printf("Usage: mkwiki [options]\nOptions:\n\t-h, --help\t\t\tprint this help\n\t-v, --version\t\t\tprint version\n\t-t, --path [PATH]\t\tabsolute path to markdown storage\n\t-p, --port [PORT]\t\tsets port for listening\n\t-a, --app-url [APP_URL]\t\tapplication url (if behind proxy)\n")
 			os.Exit(0)
 		case "-v", "--version":
-			fmt.Printf("mkwiki 0.1.0\nhttps://github.com/tvrzna/mkwiki\n\nReleased under the MIT License.\n")
+			fmt.Printf("mkwiki %s\nhttps://github.com/tvrzna/mkwiki\n\nReleased under the MIT License.\n", c.getVersion())
 			os.Exit(0)
 		case "-t", "--path":
 			if path, err := filepath.Abs(value); err != nil {
@@ -56,4 +58,11 @@ func (c *config) getAppUrl() string {
 		return "http://" + c.getServerUri()
 	}
 	return c.appUrl
+}
+
+func (c *config) getVersion() string {
+	if buildVersion == "" {
+		return "develop"
+	}
+	return buildVersion
 }
