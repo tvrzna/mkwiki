@@ -6,7 +6,7 @@ html {
 body {
 	background-color: #f0f0f0;
 	margin: 0;
-	font-size: 1rem;	
+	font-size: 1rem;
 }
 
 #wrapper {
@@ -28,7 +28,10 @@ body {
 
 #wrapper > #content {
 	flex: 3;
+	overflow: auto;
 	padding: 1rem;
+	text-wrap: balance;
+	word-wrap: break-word;
 }
 
 #wrapper > #pages {
