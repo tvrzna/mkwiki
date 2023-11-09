@@ -76,6 +76,11 @@ code, pre {
 	font-size: 0.75rem;
 	line-height: 1rem;
 	padding: 0.125rem 0.25rem;
+	text-wrap: balance;
+}
+
+code {
+	padding: 0;
 }
 
 img {
