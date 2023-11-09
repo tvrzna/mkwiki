@@ -7,23 +7,43 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
+	"strings"
 
 	"github.com/tvrzna/go-utils/args"
 )
 
 var buildVersion string
 
+type theme byte
+
+const (
+	themeLight theme = iota
+	themeDark
+)
+
+func (t *theme) getStyle() string {
+	switch *t {
+	case themeDark:
+		return "theme-dark.css"
+	case themeLight:
+	default:
+		return "theme-light.css"
+	}
+	return "theme-light.css"
+}
+
 type config struct {
 	path   string
 	appUrl string
 	port   int
 	layout *template.Template
+	theme
 }
 
 func loadConfig(arg []string) *config {
 	cwd, _ := os.Getwd()
 
-	c := &config{cwd, "", 1500, layout()}
+	c := &config{cwd, "", 1500, layout(), themeLight}
 
 	args.ParseArgs(arg, func(arg, value string) {
 		switch arg {
@@ -43,6 +63,8 @@ func loadConfig(arg []string) *config {
 			c.port, _ = strconv.Atoi(value)
 		case "-a", "--app-url":
 			c.appUrl = value
+		case "-e", "--theme":
+			c.theme = parseTheme(value)
 		}
 	})
 
@@ -65,4 +87,15 @@ func (c *config) getVersion() string {
 		return "develop"
 	}
 	return buildVersion
+}
+
+func parseTheme(val string) theme {
+	switch strings.ToLower(val) {
+	case "dark":
+		return themeDark
+	case "light":
+	default:
+		return themeLight
+	}
+	return themeLight
 }

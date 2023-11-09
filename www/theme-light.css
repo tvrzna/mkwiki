@@ -1,0 +1,10 @@
+body {
+    --body-bg: #f0f0f0;
+    --wrapper-bg: #ffffff;
+    --wrapper-border: #e5e5e5;
+    --wrapper-fg: #333333;
+    --footer-fg: #777777;
+    --borders: #cccccc;
+    --code-bg: #eeeeee;
+    --last-modify-fg: #666;
+}

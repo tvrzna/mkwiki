@@ -88,7 +88,7 @@ func layout() *template.Template {
 
 func requestHandler(c *config) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		if r.URL.Path == "/style.css" || r.URL.Path == "/favicon.ico" {
+		if isLocalFile(r.URL.Path) {
 			f, _ := www.ReadFile("www" + r.URL.Path)
 			w.Header().Add("content-type", getMimeType(r.URL.Path))
 			w.Write(f)
@@ -133,6 +133,15 @@ func serveImage(c *config, path string, w http.ResponseWriter) {
 
 func getMimeType(path string) string {
 	return mime.TypeByExtension(path[strings.LastIndex(path, "."):])
+}
+
+func isLocalFile(filename string) bool {
+	for _, v := range []string{"style.css", "favicon.ico", "theme-light.css", "theme-dark.css"} {
+		if "/"+v == filename {
+			return true
+		}
+	}
+	return false
 }
 
 func (p *page) loadMarkdown(path string) {
@@ -182,4 +191,8 @@ func (p *page) loadContentList(c *config, currentPath string) {
 
 func (p *page) UrlFor(path string) string {
 	return p.c.getAppUrl() + "/" + path
+}
+
+func (p *page) Theme() string {
+	return p.c.theme.getStyle()
 }
