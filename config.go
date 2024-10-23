@@ -48,7 +48,15 @@ func loadConfig(arg []string) *config {
 	args.ParseArgs(arg, func(arg, value string) {
 		switch arg {
 		case "-h", "--help":
-			fmt.Printf("Usage: mkwiki [options]\nOptions:\n\t-h, --help\t\t\tprint this help\n\t-v, --version\t\t\tprint version\n\t-t, --path [PATH]\t\tabsolute path to markdown storage\n\t-p, --port [PORT]\t\tsets port for listening\n\t-a, --app-url [APP_URL]\t\tapplication url (if behind proxy)\n")
+			fmt.Printf(`Usage: mkwiki [options]
+Options:
+	-h, --help			print this help
+	-v, --version			print version
+	-t, --path [PATH]		absolute path to markdown storage
+	-p, --port [PORT]		sets port for listening
+	-a, --app-url [APP_URL]		application url (if behind proxy)
+	-e, --theme [light|dark]	sets color theme
+`)
 			os.Exit(0)
 		case "-v", "--version":
 			fmt.Printf("mkwiki %s\nhttps://github.com/tvrzna/mkwiki\n\nReleased under the MIT License.\n", c.getVersion())
