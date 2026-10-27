@@ -1,4 +1,4 @@
-github.com/gomarkdown/markdown v0.0.0-20260412113850-134a5b2cce7f h1:C5vKBogs/Qf5ID8F8XuRO8SFL+5SH7JMJrAfdLAZ2iA=
-github.com/gomarkdown/markdown v0.0.0-20260412113850-134a5b2cce7f/go.mod h1:JDGcbDT52eL4fju3sZ4TeHGsQwhG9nbDV21aMyhwPoA=
+github.com/gomarkdown/markdown v0.0.0-20261026184151-79e163b7b632 h1:kycupqEwsSTMkgv8OB0mbaWw47OAIc0cXfnM106CSVs=
+github.com/gomarkdown/markdown v0.0.0-20261026184151-79e163b7b632/go.mod h1:zLCvXLlUnS5tvOi4hpJgzzpJsq0+dliwn85VbPh1JbQ=
 github.com/tvrzna/go-utils/args v0.0.2 h1:x1cPDtgdCeWTrSt3QHiU+tCiyr5JNBpasrnMZ5Npa3Y=
 github.com/tvrzna/go-utils/args v0.0.2/go.mod h1:LD8ey0IbYFEatYvyjy2Jf45ywuLnKZKbAtj8ndT0C9k=
